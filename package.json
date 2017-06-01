@@ -1,0 +1,48 @@
+{
+  "name": "tradfri-coapdtls",
+  "version": "0.0.1",
+  "author": "Kosta  <trebankosta@gmail.com>",
+  "description": "coap dtls interface for tradfri lights",
+  "main": "tradfri-coapdtls.coffee",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/treban/tradfri-coapdtls.git"
+  },
+  "homepage": "https://github.com/treban/tradfri-coapdtls.git",
+  "keywords": [
+    "coap",
+    "tradfri",
+    "iot",
+    "internet of things"
+  ],
+  "files": [
+    "tradfri-coapdtls.coffee",
+    "README.md",
+    "LICENSE.md",
+    "coapdtls.js",
+    "lib/agent.js",
+    "lib/helpers.js",
+    "lib/incoming_message.js"
+    "lib/observe_read_stream.js",
+    "lib/observe_write_stream.js",
+    "lib/option_converter.js",
+    "lib/outgoing_message.js",
+    "lib/parameters.js",
+    "lib/polyfill.js",
+    "lib/retry_send.js"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "bl": "~1.0.0",
+    "capitalize": "^1.0.0",
+    "coap-packet": "~0.1.12",
+    "node-mbed-dtls": "^2.4.6",
+    "debug": "^2.2.0",
+    "fastseries": "^1.7.0",
+    "lru-cache": "~4.0.0",
+    "readable-stream": "~2.0.5",
+    "cbor": "~1.0.4",
+    "rsvp": "^3.0.5",
+    "p-tgrottler": "^1.0.2"
+  }
+}

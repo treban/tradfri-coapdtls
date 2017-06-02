@@ -1,6 +1,6 @@
 {
   "name": "tradfri-coapdtls",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "author": "Kosta  <trebankosta@gmail.com>",
   "description": "coap dtls interface for tradfri lights",
   "main": "tradfri-coapdtls.coffee",

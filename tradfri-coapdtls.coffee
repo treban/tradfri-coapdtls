@@ -76,9 +76,9 @@ class TradfriCoapdtls
         protocol: "coaps:",
         slashes: true,
         auth: null,
-        host: "10.0.10.106:5684",
+        host: tradfriIP+":5684",
         port: "5684",
-        hostname: "10.0.10.106",
+        hostname: tradfriIP,
         hash: null,
         search: null,
         query: null,
@@ -90,9 +90,9 @@ class TradfriCoapdtls
         url["method"]="GET"
       url.pathname=command
       url.path=command
-      url.href="coaps://10.0.10.106:5684"+command
-      #console.log(url)
-      #console.log(payload)
+      url.href="coaps://"+tradfriIP+":5684"+command
+      console.log(url)
+      console.log(payload)
       req = coapdtls.request(url,
         dtls_opts,
         (req) ->

@@ -1,6 +1,6 @@
 {
   "name": "tradfri-coapdtls",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "author": "Kosta  <trebankosta@gmail.com>",
   "description": "coap dtls interface for tradfri lights",
   "main": "tradfri-coapdtls.coffee",
@@ -46,6 +46,6 @@
     "p-throttler": "^1.0.2"
   },
   "scripts": {
-  "postinstall" : "sed 's!console.log!#!' ./node_modules/node-mbed-dtls/server.js > ./node_modules/node-mbed-dtls/server2.js ; mv ./node_modules/node-mbed-dtls/server2.js ./node_modules/node-mbed-dtls/server.js"
+    "postinstall": "sed 's!console.log!#!' ./node_modules/node-mbed-dtls/server.js > ./node_modules/node-mbed-dtls/server2.js ; mv ./node_modules/node-mbed-dtls/server2.js ./node_modules/node-mbed-dtls/server.js"
   }
 }

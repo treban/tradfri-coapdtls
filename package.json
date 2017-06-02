@@ -22,7 +22,7 @@
     "coapdtls.js",
     "lib/agent.js",
     "lib/helpers.js",
-    "lib/incoming_message.js"
+    "lib/incoming_message.js",
     "lib/observe_read_stream.js",
     "lib/observe_write_stream.js",
     "lib/option_converter.js",

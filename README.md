@@ -14,20 +14,19 @@ over the tradfri ip-gateway with coap+dtls protocol.
 * implement observation of device changes
 
 ### ChangeLog
-* 0.0.1 - alpha version
+* 0.0.7 - first public alpha version
 
 ### License
 ----------------------------
 MIT, see LICENSE.md file.
 
-This software is based on the noad-coap package with dtls extensions
-
+This software is based on the node-coap package with dtls extensions
 node-coap  software performed by contributors :
 Matteo Collina,
 Nguyen Quoc Dinh,
 Daniel Moran Jimenez,
 Ignacio Martín,
-Christopher Hiller, 
+Christopher Hiller
 
 DTLS extensions performed by
 J. Ian Lindsay

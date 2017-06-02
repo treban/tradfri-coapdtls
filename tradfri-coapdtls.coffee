@@ -91,8 +91,8 @@ class TradfriCoapdtls
       url.pathname=command
       url.path=command
       url.href="coaps://"+tradfriIP+":5684"+command
-      console.log(url)
-      console.log(payload)
+#      console.log(url)
+#      console.log(payload)
       req = coapdtls.request(url,
         dtls_opts,
         (req) ->

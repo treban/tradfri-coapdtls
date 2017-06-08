@@ -1,7 +1,7 @@
 tradfri-coapdtls
 =======================
 
-> **alpha stadium !**
+> **beta stadium !**
 
 This sofware provides an interface for the tradfri lights
 over the tradfri ip-gateway with coap+dtls protocol.
@@ -15,6 +15,7 @@ over the tradfri ip-gateway with coap+dtls protocol.
 
 ### ChangeLog
 * 0.0.7 - first public alpha version
+* 0.0.8 - Code refactoring
 
 ### License
 ----------------------------

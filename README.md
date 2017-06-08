@@ -8,11 +8,6 @@ over the tradfri ip-gateway with coap+dtls protocol.
 
 ========
 
-
-### ToDoList
-* implement color control
-* implement observation of device changes
-
 ### ChangeLog
 * 0.0.7 - first public alpha version
 * 0.0.8 - Code refactoring

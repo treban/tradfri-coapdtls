@@ -8,7 +8,7 @@
 
 'use strict';
 
-throttler = require('p-throttler')
+pthrottler = require('p-throttler')
 
 Agent = require('./lib/agent')
 parameters = require('./lib/parameters')
@@ -18,7 +18,7 @@ util = require('util')
 
 class TradfriCoapdtls
 
-  throttler=throttler.create(10, {'coap-req': 1})
+  throttler=pthrottler.create(10, {'coap-req': 1})
   @globalAgent = null
   @dtls_opts=null
 
@@ -26,11 +26,12 @@ class TradfriCoapdtls
   tradfriIP=null
 
   coapTiming = {
-    ackTimeout:1.5,
-    ackRandomFactor: 3.0,
-    maxRetransmit: 3,
-    maxLatency: 5,
-    piggybackReplyMs: 40
+    ackTimeout:0.5,
+    ackRandomFactor: 1.0,
+    maxRetransmit: 2,
+    maxLatency: 2,
+    piggybackReplyMs: 10,
+    debug: 0
   }
 
   constructor: (config , cb) ->
@@ -53,8 +54,26 @@ class TradfriCoapdtls
       port: 5684
     },@dtls_opts,cb)
 
+  finish: ->
+    @globalAgent.finish()
+    throttler=pthrottler.create(10, {'coap-req': 1})
+
   getGatewayInfo: ->
     return @_send_request('/15011/15012')
+
+  setGateway: (pay) ->
+    payload = {
+      9023 : 'pool.ntp.org'
+    }
+    return @_send_request('/15011/15012',payload)
+
+  setColorHex: (id,color) ->
+    payload = {
+      3311 : [{
+        5706 : color
+        }]
+    }
+    return @_send_request('/15001/'+id,payload)
 
   getAllDevices: ->
     promarr=[]
@@ -120,6 +139,7 @@ class TradfriCoapdtls
     return @_send_request('/15004/'+id,false,callback)
 
   _send_request: (command, payload,callback) =>
+    #console.log("Send #{command}")
     throttler.enqueue( (bla) =>
        return @_send_command(command,payload,callback)
     , 'coap-req')
@@ -178,6 +198,10 @@ class TradfriCoapdtls
           #  console.log(res)
             resolve("Response Code: "+res._packet.code)
       )
+#      @req.on('timeout', (res) =>
+#        console.log("Timeout")
+      #  reject("timeout")
+#      )
       @req.end()
     )
 

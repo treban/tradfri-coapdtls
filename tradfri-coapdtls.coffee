@@ -67,14 +67,6 @@ class TradfriCoapdtls
     }
     return @_send_request('/15011/15012',payload)
 
-  setColorHex: (id,color) ->
-    payload = {
-      3311 : [{
-        5706 : color
-        }]
-    }
-    return @_send_request('/15001/'+id,payload)
-
   getAllDevices: ->
     promarr=[]
     @getAllDeviceIDs().then( (ids)=>
@@ -97,11 +89,25 @@ class TradfriCoapdtls
       reject(err)
     )
 
+  getAllScenes: (gid) ->
+    promarr3=[]
+    @getAllScenesIDs(gid).then( (ids)=>
+      ids.forEach((id) =>
+        promarr3.push(@getScenebyID(gid,id))
+      )
+      return Promise.all(promarr3)
+    ).catch ( (err) =>
+      reject(err)
+    )
+
   getAllDeviceIDs: ->
     return @_send_request('/15001')
 
   getAllGroupIDs: ->
     return @_send_request('/15004')
+
+  getAllScenesIDs: (gid) ->
+    return @_send_request('/15005'+gid)
 
   getDevicebyID: (id) ->
     return @_send_request('/15001/'+id)
@@ -109,28 +115,51 @@ class TradfriCoapdtls
   getGroupbyID: (id) ->
     return @_send_request('/15004/'+id)
 
-  setDevice: (id,sw) ->
+  getScenebyID: (gid,id) ->
+    return @_send_request('/15005/'+gid+'/'+id)
+
+  setDevice: (id,sw,time=5) ->
     payload = {
       3311 : [{
         5850 : sw.state,
-        5851 : sw.brightness
+        5851 : sw.brightness,
+        5712 : time
         }]
     }
     return @_send_request('/15001/'+id,payload)
 
-  setGroup: (id,sw) ->
+  setGroup: (id,sw,time=5) ->
     payload = {
-      5850 : sw.state
+      5850 : sw.state,
+      5712 : time
     }
     return @_send_request('/15004/'+id,payload)
 
-  setColorHex: (id,color) ->
+  setColorHex: (id,color,time=5) ->
     payload = {
       3311 : [{
-        5706 : color
+        5706 : color,
+        5712 : time
         }]
     }
     return @_send_request('/15001/'+id,payload)
+
+  setColorXY: (id,color,time=5) ->
+    payload = {
+      3311 : [{
+        5709 : color,
+        5710 : 27000,
+        5712 : time
+        }]
+    }
+    return @_send_request('/15001/'+id,payload)
+
+  setScene: (gid,id) ->
+    payload = {
+      5850 : 1
+      9039 : id
+    }
+    return @_send_request('/15004/'+gid,payload)
 
   setObserver: (id,callback) =>
     return @_send_request('/15001/'+id,false,callback)

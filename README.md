@@ -8,10 +8,36 @@ over the tradfri ip-gateway with coap+dtls protocol.
 
 ========
 
+### Usage
+
+This tradfri lib is Promise based.
+
+
+
+```
+  tradfriHub = new TradfriCoapdtls({securityId: @secID,hubIpAddress: @hubIP})
+  tradfriHub.connect().then( (val)=>
+    tradfriHub.getGatewayInfo().then( (res) =>
+      console.log("Gateway online - Firmware: #{res['9029']}")
+    ).catch( (error) =>
+      console.log ("Gateway is not reachable!")
+    )
+  )
+  tradfriHub.setDevice(@address, {
+    state: 1,
+    brightness: 254
+  },5).then( (res) =>
+    console.log("New value send to device")
+  )
+
+```
+
 ### ChangeLog
 * 0.0.7 - first public alpha version
 * 0.0.8 - Code refactoring
+* 0.0.9 - bugfix
 * 0.0.10 - bugfix
+* 0.0.11 - bugfix
 
 ### License
 ----------------------------

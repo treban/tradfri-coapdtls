@@ -15,8 +15,9 @@ parameters = require('./lib/parameters')
 net = require('net')
 URL = require('url')
 util = require('util')
+events = require('events')
 
-class TradfriCoapdtls
+class TradfriCoapdtls extends events.EventEmitter
 
   throttler=pthrottler.create(10, {'coap-req': 1})
   @globalAgent = null
@@ -34,7 +35,7 @@ class TradfriCoapdtls
     debug: 0
   }
 
-  constructor: (config , cb) ->
+  constructor: (config) ->
 
     tradfriIP = config.hubIpAddress
     parameters.refreshTiming(coapTiming)
@@ -48,14 +49,20 @@ class TradfriCoapdtls
       key:            null
     }
 
-    @globalAgent=new Agent({
-      type: 'udp4',
-      host: tradfriIP,
-      port: 5684
-    },@dtls_opts,cb)
+  connect: =>
+    return new Promise((resolve, reject) =>
+      @globalAgent=new Agent({
+        type: 'udp4',
+        host: tradfriIP,
+        port: 5684
+      },@dtls_opts, (res) =>
+        return resolve()
+      )
+    )
 
   finish: ->
     @globalAgent.finish()
+    throttler.abort()
     throttler=pthrottler.create(10, {'coap-req': 1})
 
   getGatewayInfo: ->
@@ -122,10 +129,11 @@ class TradfriCoapdtls
     payload = {
       3311 : [{
         5850 : sw.state,
-        5851 : sw.brightness,
         5712 : time
         }]
     }
+    if ( sw.brightness > 0 )
+      payload[3311][0][5851] = sw.brightness
     return @_send_request('/15001/'+id,payload)
 
   setGroup: (id,sw,time=5) ->
@@ -210,10 +218,10 @@ class TradfriCoapdtls
         @req.write(JSON.stringify(payload))
 
       @req.on('response', (res) =>
-      #  console.log("Respone Code")
-      #  console.log(res.code)
-        if (res.code == '4.04')
-          reject("RC: "+res.code+" URL: "+ JSON.stringify(url))
+        #console.log("Respone Code")
+        #console.log(res.code)
+        if (res.code == '4.04' or res.code == '4.05' )
+          reject(res.code)
         else
           if (callback)
             res.on('data', (dat) =>
@@ -225,12 +233,8 @@ class TradfriCoapdtls
             resolve(JSON.parse(res.payload.toString()))
           else
           #  console.log(res)
-            resolve("Response Code: "+res._packet.code)
+            resolve("RC: "+res._packet.code)
       )
-#      @req.on('timeout', (res) =>
-#        console.log("Timeout")
-      #  reject("timeout")
-#      )
       @req.end()
     )
 

@@ -1,6 +1,6 @@
 {
   "name": "tradfri-coapdtls",
-  "version": "0.0.10",
+  "version": "0.0.9",
   "author": {
     "name": "Kosta",
     "email": "trebankosta@gmail.com"
@@ -36,16 +36,13 @@
     "bl": "~1.0.0",
     "capitalize": "^1.0.0",
     "coap-packet": "~0.1.12",
-    "node-mbed-dtls": "git+https://github.com/neustar/node-mbed-dtls.git",
+    "node-mbed-dtls": "git+https://github.com/treban/node-mbed-dtls.git",
     "debug": "^2.2.0",
     "fastseries": "^1.7.0",
     "lru-cache": "~4.0.0",
     "readable-stream": "~2.0.5",
     "cbor": "~1.0.4",
     "p-throttler": "^1.0.2"
-  },
-  "scripts": {
-    "postinstall": "sed 's!console.log!//!' ./node_modules/node-mbed-dtls/server.js > ./node_modules/node-mbed-dtls/server2.js ; mv ./node_modules/node-mbed-dtls/server2.js ./node_modules/node-mbed-dtls/server.js;sed 's!console.log!//!' ./node_modules/node-mbed-dtls/client_socket.js > ./node_modules/node-mbed-dtls/client_socket2.js && mv ./node_modules/node-mbed-dtls/client_socket2.js ./node_modules/node-mbed-dtls/client_socket.js"
   },
   "gitHead": "e9d94bd0ab85c7cf307911989771555a3c8dc1bd",
   "bugs": {

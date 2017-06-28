@@ -48,9 +48,9 @@
   "bugs": {
     "url": "https://github.com/treban/tradfri-coapdtls/issues"
   },
-  "_id": "tradfri-coapdtls@0.0.9",
-  "_shasum": "ce98e4fd385c97540a6aa44555cd2e75ee0609e8",
-  "_from": "tradfri-coapdtls@>=0.0.8",
+  "_id": "tradfri-coapdtls@0.0.11",
+  "_shasum": "0ec8ffdf1e59d15617755b4baec0942b09da5c26",
+  "_from": "tradfri-coapdtls@>=0.0.11",
   "_npmVersion": "3.5.2",
   "_nodeVersion": "4.2.6",
   "_npmUser": {
@@ -58,8 +58,8 @@
     "email": "trebankosta@gmail.com"
   },
   "dist": {
-    "shasum": "ce98e4fd385c97540a6aa44555cd2e75ee0609e8",
-    "tarball": "https://registry.npmjs.org/tradfri-coapdtls/-/tradfri-coapdtls-0.0.9.tgz"
+    "shasum": "0ec8ffdf1e59d15617755b4baec0942b09da5c26",
+    "tarball": "https://registry.npmjs.org/tradfri-coapdtls/-/tradfri-coapdtls-0.0.11.tgz"
   },
   "maintainers": [
     {
@@ -69,9 +69,10 @@
   ],
   "_npmOperationalInternal": {
     "host": "s3://npm-registry-packages",
-    "tmp": "tmp/tradfri-coapdtls-0.0.9.tgz_1497301280716_0.1968818719033152"
+    "tmp": "tmp/tradfri-coapdtls-0.0.11.tgz_1498600337576_0.06587651697918773"
   },
   "directories": {},
-  "_resolved": "https://registry.npmjs.org/tradfri-coapdtls/-/tradfri-coapdtls-0.0.9.tgz",
+  "_resolved": "https://registry.npmjs.org/tradfri-coapdtls/-/tradfri-coapdtls-0.0.11.tgz",
+  "scripts": {},
   "readme": "ERROR: No README data found!"
 }

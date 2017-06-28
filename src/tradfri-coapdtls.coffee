@@ -70,7 +70,7 @@ class TradfriCoapdtls extends events.EventEmitter
 
   setGateway: (pay) ->
     payload = {
-      9023 : 'pool.ntp.org'
+      9023 : pay
     }
     return @_send_request('/15011/15012',payload)
 

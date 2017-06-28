@@ -102,7 +102,7 @@
     TradfriCoapdtls.prototype.setGateway = function(pay) {
       var payload;
       payload = {
-        9023: 'pool.ntp.org'
+        9023: pay
       };
       return this._send_request('/15011/15012', payload);
     };

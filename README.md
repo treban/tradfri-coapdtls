@@ -15,7 +15,11 @@ This tradfri lib is Promise based.
 
 
 ```
-  tradfriHub = new TradfriCoapdtls({securityId: @secID,hubIpAddress: @hubIP})
+(coffeecode)
+
+  TradfriCoapdtls = require('tradfri-coapdtls')
+
+  tradfriHub = new TradfriCoapdtls({securityId: @secID , hubIpAddress: @hubIP})
   tradfriHub.connect().then( (val)=>
     tradfriHub.getGatewayInfo().then( (res) =>
       console.log("Gateway online - Firmware: #{res['9029']}")
@@ -38,6 +42,7 @@ This tradfri lib is Promise based.
 * 0.0.9 - bugfix
 * 0.0.10 - bugfix
 * 0.0.11 - bugfix
+* 0.0.12 - changed package to nativ js
 
 ### License
 ----------------------------

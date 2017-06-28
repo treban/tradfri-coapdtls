@@ -6,7 +6,7 @@
     "email": "trebankosta@gmail.com"
   },
   "description": "coap dtls interface for tradfri lights",
-  "main": "tradfri-coapdtls.coffee",
+  "main": "tradfri-coapdtls.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/treban/tradfri-coapdtls.git"

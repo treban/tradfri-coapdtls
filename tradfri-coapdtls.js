@@ -17,7 +17,7 @@ const URL = require('url')
 const util = require('util')
 const events = require('events')
 
-const throttler = pthrottler.create(10, {'coap-req': 1});
+const throttler = pthrottler.create(10, { 'coap-req': 1 });
 
 const coapTiming = {
   ackTimeout: 0.5,
@@ -175,7 +175,7 @@ class TradfriCoapdtls extends events.EventEmitter {
   _send_command(command, payload, callback) {
     this.req = null;
     return new Promise((resolve, reject) => {
-      url = {
+      const url = {
         protocol: 'coaps:',
         slashes: true,
         auth: null,

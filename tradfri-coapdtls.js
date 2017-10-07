@@ -76,20 +76,17 @@ class TradfriCoapdtls extends events.EventEmitter {
 
   getAllDevices() {
     return this.getAllDeviceIDs()
-      .then(ids => Promise.all(ids.map(id => this.getDevicebyID(id))))
-      .catch(reject);
+      .then(ids => Promise.all(ids.map(id => this.getDevicebyID(id))));
   }
 
   getAllGroups() {
     return this.getAllGroupIDs()
-      .then(ids => Promise.all(ids.map(id => this.getGroupbyID(id))))
-      .catch(reject);
+      .then(ids => Promise.all(ids.map(id => this.getGroupbyID(id))));
   }
 
   getAllScenes(gid) {
     return this.getAllScenesIDs(gid)
-      .then(ids => Promise.all(ids.map(id => this.getScenebyID(gid,id))))
-      .catch(reject);
+      .then(ids => Promise.all(ids.map(id => this.getScenebyID(gid,id))));
   }
 
   getAllDeviceIDs() {

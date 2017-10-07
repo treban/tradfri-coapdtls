@@ -30,6 +30,8 @@ const coapTiming = {
 
 class TradfriCoapdtls extends events.EventEmitter {
   constructor (config) {
+    super();
+
     this.globalAgent = null;
     this.dtls_opts = null;
 

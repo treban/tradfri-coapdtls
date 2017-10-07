@@ -172,7 +172,7 @@ class TradfriCoapdtls extends events.EventEmitter {
 
   _send_command(command, payload, callback) {
     this.req = null;
-    return new Promise((resolve, reject) =>
+    return new Promise((resolve, reject) => {
       url = {
         protocol: 'coaps:',
         slashes: true,
@@ -231,7 +231,7 @@ class TradfriCoapdtls extends events.EventEmitter {
       });
 
       this.req.end();
-    );
+    });
   }
 }
 

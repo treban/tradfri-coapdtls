@@ -17,7 +17,8 @@
     "tradfri"
   ],
   "files": [
-    "tradfri-coapdtls.coffee",
+    "tradfri-coapdtls.js",
+    "src/tradfri-coapdtls.coffee",
     "README.md",
     "LICENSE.md",
     "lib/agent.js",

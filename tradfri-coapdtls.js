@@ -210,6 +210,9 @@
         5850: sw.state,
         5712: time
       };
+      if (sw.brightness > 0) {
+        payload[5851] = sw.brightness;
+      }
       return this._send_request('/15004/' + id, payload);
     };
 
@@ -229,7 +232,24 @@
       return this._send_request('/15001/' + id, payload);
     };
 
-    TradfriCoapdtls.prototype.setColorXY = function(id, color, time) {
+    TradfriCoapdtls.prototype.setColorXY = function(id, colorX, colorY, time) {
+      var payload;
+      if (time == null) {
+        time = 5;
+      }
+      payload = {
+        3311: [
+          {
+            5709: colorX,
+            5710: colorY,
+            5712: time
+          }
+        ]
+      };
+      return this._send_request('/15001/' + id, payload);
+    };
+
+    TradfriCoapdtls.prototype.setColorTemp = function(id, color, time) {
       var payload;
       if (time == null) {
         time = 5;

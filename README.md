@@ -1,8 +1,6 @@
 tradfri-coapdtls
 =======================
 
-> **beta stadium !**
-
 This sofware provides an interface for the tradfri lights
 over the tradfri ip-gateway with coap+dtls protocol.
 
@@ -10,9 +8,7 @@ over the tradfri ip-gateway with coap+dtls protocol.
 
 ### Usage
 
-This tradfri lib is Promise based.
-
-
+This lib is Promise based.
 
 ```
 (coffeecode)
@@ -43,13 +39,16 @@ This tradfri lib is Promise based.
 * 0.0.10 - bugfix
 * 0.0.11 - bugfix
 * 0.0.12 - changed package to nativ js
+* 0.0.13 - add rgb
 
 ### License
 ----------------------------
 MIT, see LICENSE.md file.
 
+----------------------------
+
 This software is based on the node-coap package with dtls extensions
-node-coap  software performed by contributors :
+node-coap software performed by contributors :
 Matteo Collina,
 Nguyen Quoc Dinh,
 Daniel Moran Jimenez,

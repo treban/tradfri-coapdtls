@@ -141,6 +141,8 @@ class TradfriCoapdtls extends events.EventEmitter
       5850 : sw.state,
       5712 : time
     }
+    if ( sw.brightness > 0 )
+      payload[5851] = sw.brightness
     return @_send_request('/15004/'+id,payload)
 
   setColorHex: (id,color,time=5) ->
@@ -152,7 +154,17 @@ class TradfriCoapdtls extends events.EventEmitter
     }
     return @_send_request('/15001/'+id,payload)
 
-  setColorXY: (id,color,time=5) ->
+  setColorXY: (id,colorX,colorY,time=5) ->
+    payload = {
+      3311 : [{
+        5709 : colorX,
+        5710 : colorY,
+        5712 : time
+        }]
+    }
+    return @_send_request('/15001/'+id,payload)
+
+  setColorTemp: (id,color,time=5) ->
     payload = {
       3311 : [{
         5709 : color,
@@ -161,6 +173,7 @@ class TradfriCoapdtls extends events.EventEmitter
         }]
     }
     return @_send_request('/15001/'+id,payload)
+
 
   setScene: (gid,id) ->
     payload = {

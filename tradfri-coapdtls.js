@@ -123,10 +123,11 @@ class TradfriCoapdtls extends events.EventEmitter {
     });
   }
 
-  setGroup(id,sw,time = 5) {
+  setGroup(id, sw, time = 5) {
     return this._send_request(`/15004/${id}`, {
       5850: sw.state,
       5712: time,
+      5851: sw.brightness > 0 ? sw.brightness : undefined,
     });
   }
 
@@ -139,7 +140,17 @@ class TradfriCoapdtls extends events.EventEmitter {
     });
   }
 
-  setColorXY(id, color, time = 5) {
+  setColorXY(id, colorX, colorY, time = 5) {
+    return this._send_request(`/15001/${id}`, {
+      3311: [{
+        5709: colorX,
+        5710: colorY,
+        5712: time,
+      }]
+    });
+  }
+
+  setColorTemp(id,color,time=5) {
     return this._send_request(`/15001/${id}`, {
       3311: [{
         5709: color,
@@ -189,13 +200,13 @@ class TradfriCoapdtls extends events.EventEmitter {
       };
 
       if (payload) {
-        url['method'] = 'PUT';
+        url.method = 'PUT';
       } else {
-        url['method'] = 'GET';
+        url.method = 'GET';
       }
 
       if (callback) {
-        url['observe'] = true;
+        url.observe = true;
       }
 
       // console.log(url)

@@ -44,7 +44,7 @@ class TradfriCoapdtls extends events.EventEmitter
       host:           tradfriIP,
       port:           5684,
       psk:            new Buffer(config.securityId),
-      PSKIdent:       new Buffer('Client_identity'),
+      PSKIdent:       new Buffer(config.clientId),
       peerPublicKey:  null,
       key:            null
     }
@@ -64,6 +64,12 @@ class TradfriCoapdtls extends events.EventEmitter
     @globalAgent.finish()
     throttler.abort()
     throttler=pthrottler.create(10, {'coap-req': 1})
+
+  initPSK: (ident) ->
+    payload = {
+      9090 : ident
+    }
+    return @_send_request('/15011/9063',payload,false,true)
 
   getGatewayInfo: ->
     return @_send_request('/15011/15012')
@@ -188,13 +194,13 @@ class TradfriCoapdtls extends events.EventEmitter
   setObserverGroup: (id,callback) =>
     return @_send_request('/15004/'+id,false,callback)
 
-  _send_request: (command, payload,callback) =>
+  _send_request: (command, payload,callback,ident) =>
     #console.log("Send #{command}")
     throttler.enqueue( (bla) =>
-       return @_send_command(command,payload,callback)
+       return @_send_command(command,payload,callback,ident)
     , 'coap-req')
 
-  _send_command: (command,payload,callback) =>
+  _send_command: (command,payload,callback,ident) =>
     @req=null
     return new Promise((resolve, reject) =>
       url = {
@@ -213,14 +219,17 @@ class TradfriCoapdtls extends events.EventEmitter
         href: "coaps://"+tradfriIP+":5684"+command
       }
       if (payload)
-        url["method"]="PUT"
+        if (ident)
+          url["method"]="POST"
+        else
+          url["method"]="PUT"
       else
         url["method"]="GET"
       if (callback)
         url["observe"]=true
 
-      #console.log(url)
-      #console.log(payload)
+  #    console.log(url)
+  #    console.log(payload)
       @req = @globalAgent.request(url, @dtlsOpts)
 
       @req.on('error', (error) =>
@@ -231,8 +240,8 @@ class TradfriCoapdtls extends events.EventEmitter
         @req.write(JSON.stringify(payload))
 
       @req.on('response', (res) =>
-        #console.log("Respone Code")
-        #console.log(res.code)
+  #      console.log("Respone Code")
+  #      console.log(res.code)
         if (res.code == '4.04' or res.code == '4.05' )
           reject(res.code)
         else
@@ -242,11 +251,14 @@ class TradfriCoapdtls extends events.EventEmitter
             )
             resolve("RC : "+res.code)
           if (!payload)
-          #  console.log(res)
+  #          console.log(res)
             resolve(JSON.parse(res.payload.toString()))
           else
-          #  console.log(res)
-            resolve("RC: "+res._packet.code)
+  #          console.log(res)
+            if (ident)
+              resolve(JSON.parse(res.payload.toString()))
+            else
+              resolve("RC: "+res._packet.code)
       )
       @req.end()
     )

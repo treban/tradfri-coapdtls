@@ -41,6 +41,7 @@ This lib is Promise based.
 * 0.0.12 - changed package to nativ js
 * 0.0.13 - add rgb
 * 0.0.14 - add psk handshake needed for gateway version 1.2.42
+* 0.0.15 - bugfix
 
 ### License
 ----------------------------

@@ -80,6 +80,16 @@ class TradfriCoapdtls extends events.EventEmitter
     }
     return @_send_request('/15011/15012',payload)
 
+  setReboot: () ->
+    return @_send_request('/15011/9030',false,false,false,true)
+
+  setDiscovery: () ->
+    payload = {
+      9061 : 30
+    }
+    return @_send_request('/15011/15012',payload)
+
+
   getAllDevices: ->
     promarr=[]
     @getAllDeviceIDs().then( (ids)=>
@@ -194,13 +204,13 @@ class TradfriCoapdtls extends events.EventEmitter
   setObserverGroup: (id,callback) =>
     return @_send_request('/15004/'+id,false,callback)
 
-  _send_request: (command, payload,callback,ident) =>
+  _send_request: (command, payload,callback,ident,poster) =>
     #console.log("Send #{command}")
     throttler.enqueue( (bla) =>
-       return @_send_command(command,payload,callback,ident)
+       return @_send_command(command,payload,callback,ident,poster)
     , 'coap-req')
 
-  _send_command: (command,payload,callback,ident) =>
+  _send_command: (command,payload,callback,ident,poster) =>
     @req=null
     return new Promise((resolve, reject) =>
       url = {
@@ -218,8 +228,8 @@ class TradfriCoapdtls extends events.EventEmitter
         path: command
         href: "coaps://"+tradfriIP+":5684"+command
       }
-      if (payload)
-        if (ident)
+      if (payload || poster)
+        if (ident || poster)
           url["method"]="POST"
         else
           url["method"]="PUT"
@@ -228,7 +238,7 @@ class TradfriCoapdtls extends events.EventEmitter
       if (callback)
         url["observe"]=true
 
-  #    console.log(url)
+ #      console.log(url)
   #    console.log(payload)
       @req = @globalAgent.request(url, @dtlsOpts)
 
@@ -250,7 +260,7 @@ class TradfriCoapdtls extends events.EventEmitter
               callback(JSON.parse(dat.toString()))
             )
             resolve("RC : "+res.code)
-          if (!payload)
+          if (!payload and !poster)
   #          console.log(res)
             resolve(JSON.parse(res.payload.toString()))
           else

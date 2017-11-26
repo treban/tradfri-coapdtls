@@ -42,7 +42,7 @@ class TradfriCoapdtls extends events.EventEmitter {
       host: this.tradfriIP,
       port: 5684,
       psk: new Buffer(config.securityId),
-      PSKIdent: new Buffer('Client_identity'),
+      PSKIdent: new Buffer(config.clientId),
       peerPublicKey: null,
       key: null,
     };
@@ -65,6 +65,12 @@ class TradfriCoapdtls extends events.EventEmitter {
     throttler.abort();
     throttler = pthrottler.create(10, { 'coap-req': 1 });
   }
+  
+  initPSK(ident) {
+    return this._send_request('/15011/9063', {
+      9090: ident
+    }, false, true);
+  };
 
   getGatewayInfo() {
     return this._send_request('/15011/15012');
@@ -175,12 +181,12 @@ class TradfriCoapdtls extends events.EventEmitter {
     return this._send_request(`/15004/${id}`, false, callback);
   }
 
-  _send_request(command, payload, callback) {
+  _send_request(command, payload, callback, ident) {
     // console.log("Send #{command}")
     return throttler.enqueue(() => this._send_command(command, payload, callback), 'coap-req');
   }
 
-  _send_command(command, payload, callback) {
+  _send_command(command, payload, callback, ident) {
     this.req = null;
     return new Promise((resolve, reject) => {
       const url = {
@@ -200,7 +206,11 @@ class TradfriCoapdtls extends events.EventEmitter {
       };
 
       if (payload) {
-        url.method = 'PUT';
+        if (ident) {
+          url.method = 'POST';
+        } else {
+          url.method = 'PUT';
+        }
       } else {
         url.method = 'GET';
       }
@@ -230,7 +240,7 @@ class TradfriCoapdtls extends events.EventEmitter {
             resolve(`RC: ${res.code}`);
           }
 
-          if (!payload && res.payload.toString()) {
+          if ((ident || !payload) && res.payload.toString()) {
             // console.log(res)
             resolve(JSON.parse(res.payload.toString()));
           } else if (payload) {

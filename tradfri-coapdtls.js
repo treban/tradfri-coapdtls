@@ -232,7 +232,7 @@ class TradfriCoapdtls extends events.EventEmitter {
 
           if (!payload) {
             // console.log(res)
-            resolve(JSON.parse(res.payload.toString()));
+            resolve(JSON.parse(res.payload.toString() || '{}'));
           } else {
             // console.log(res)
             resolve(`RC: ${res._packet.code}`);

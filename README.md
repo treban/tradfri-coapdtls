@@ -43,6 +43,7 @@ This lib is Promise based.
 * 0.0.14 - add psk handshake needed for gateway version 1.2.42
 * 0.0.15 - bugfix
 * 0.0.16 - bugfix
+* 0.0.17 - added reboot and discovery mode
 
 ### License
 ----------------------------

@@ -33,19 +33,23 @@ class TradfriCoapdtls extends events.EventEmitter {
     super();
 
     this.globalAgent = null;
-    this.dtls_opts = null;
+    this.dtlsOpts = null;
 
     this.tradfriIP = config.hubIpAddress
     parameters.refreshTiming(coapTiming);
 
-    this.dtls_opts = {
+    this.dtlsOpts = {
       host: this.tradfriIP,
       port: 5684,
-      psk: new Buffer(config.securityId),
-      PSKIdent: new Buffer(config.clientId),
+      psk: new Buffer(config.psk || config.securityId), // key
+      PSKIdent: new Buffer(config.psk ? config.clientId : 'Client_identity'), // user
       peerPublicKey: null,
       key: null,
     };
+
+    if (!config.psk) {
+      _initPSK(config.clientId);
+    }
   }
 
   connect() {
@@ -54,9 +58,7 @@ class TradfriCoapdtls extends events.EventEmitter {
         type: 'udp4',
         host: this.tradfriIP,
         port: 5684,
-      }, this.dtls_opts, (res) => {
-        return resolve();
-      });
+      }, this.dtlsOpts, res => resolve());
     });
   }
 
@@ -65,11 +67,16 @@ class TradfriCoapdtls extends events.EventEmitter {
     throttler.abort();
     throttler = pthrottler.create(10, { 'coap-req': 1 });
   }
-  
-  initPSK(ident) {
+
+  _initPSK(ident) {
     return this._send_request('/15011/9063', {
       9090: ident
-    }, false, true);
+    }, false, true)
+      .then((data) => {
+        this.dtlsOpts.PSKIdent = new Buffer(this.clientId);
+        this.dtlsOpts.psk = new Buffer(data['9091']);
+        console.log('Put this key into config.psk:', data['9091']);
+      });
   };
 
   getGatewayInfo() {
@@ -183,7 +190,7 @@ class TradfriCoapdtls extends events.EventEmitter {
 
   _send_request(command, payload, callback, ident) {
     // console.log("Send #{command}")
-    return throttler.enqueue(() => this._send_command(command, payload, callback), 'coap-req');
+    return throttler.enqueue(() => this._send_command(command, payload, callback, ident), 'coap-req');
   }
 
   _send_command(command, payload, callback, ident) {
@@ -219,8 +226,6 @@ class TradfriCoapdtls extends events.EventEmitter {
         url.observe = true;
       }
 
-      // console.log(url)
-      // console.log(payload)
       this.req = this.globalAgent.request(url, this.dtlsOpts);
 
       this.req.on('error', reject);
@@ -230,9 +235,7 @@ class TradfriCoapdtls extends events.EventEmitter {
       }
 
       this.req.on('response', (res) => {
-        // console.log("Respone Code")
-        // console.log(res.code)
-        if (res.code === '4.04' || res.code === '4.05') {
+        if (res.code.startsWith('4')) {
           reject(res.code);
         } else {
           if (callback) {
@@ -241,10 +244,8 @@ class TradfriCoapdtls extends events.EventEmitter {
           }
 
           if ((ident || !payload) && res.payload.toString()) {
-            // console.log(res)
             resolve(JSON.parse(res.payload.toString()));
           } else if (payload) {
-            // console.log(res)
             resolve(`RC: ${res._packet.code}`);
           } else {
             reject('empty message');

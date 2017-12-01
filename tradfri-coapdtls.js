@@ -48,7 +48,7 @@ class TradfriCoapdtls extends events.EventEmitter {
     };
 
     if (!config.psk) {
-      _initPSK(config.clientId);
+      this._initPSK(config.clientId);
     }
   }
 

@@ -35,31 +35,28 @@ class TradfriCoapdtls extends events.EventEmitter {
     this.globalAgent = null;
     this.dtlsOpts = null;
 
-    this.tradfriIP = config.hubIpAddress
+    this.config = config;
     parameters.refreshTiming(coapTiming);
 
     this.dtlsOpts = {
-      host: this.tradfriIP,
+      host: this.config.hubIpAddress,
       port: 5684,
-      psk: new Buffer(config.psk || config.securityId), // key
-      PSKIdent: new Buffer(config.psk ? config.clientId : 'Client_identity'), // user
+      psk: new Buffer(this.config.psk || this.config.securityId), // key
+      PSKIdent: new Buffer(this.config.psk ? this.config.clientId : 'Client_identity'), // user
       peerPublicKey: null,
       key: null,
     };
-
-    if (!config.psk) {
-      this._initPSK(config.clientId);
-    }
   }
 
   connect() {
     return new Promise((resolve, reject) => {
       this.globalAgent = new Agent({
         type: 'udp4',
-        host: this.tradfriIP,
+        host: this.config.hubIpAddress,
         port: 5684,
       }, this.dtlsOpts, res => resolve());
-    });
+    })
+    .then(() => (this.config.psk ? Promise.resolve() : this._initPSK(this.config.clientId)));
   }
 
   finish() {
@@ -73,7 +70,7 @@ class TradfriCoapdtls extends events.EventEmitter {
       9090: ident
     }, false, true)
       .then((data) => {
-        this.dtlsOpts.PSKIdent = new Buffer(this.clientId);
+        this.dtlsOpts.PSKIdent = new Buffer(ident);
         this.dtlsOpts.psk = new Buffer(data['9091']);
         console.log('Put this key into config.psk:', data['9091']);
       });
@@ -189,7 +186,6 @@ class TradfriCoapdtls extends events.EventEmitter {
   }
 
   _send_request(command, payload, callback, ident) {
-    // console.log("Send #{command}")
     return throttler.enqueue(() => this._send_command(command, payload, callback, ident), 'coap-req');
   }
 
@@ -200,16 +196,16 @@ class TradfriCoapdtls extends events.EventEmitter {
         protocol: 'coaps:',
         slashes: true,
         auth: null,
-        host: `${this.tradfriIP}:5684`,
+        host: `${this.config.hubIpAddress}:5684`,
         port: '5684',
-        hostname: this.tradfriIP,
+        hostname: this.config.hubIpAddress,
         hash: null,
         search: null,
         query: null,
         method: 'GET',
         pathname: command,
         path: command,
-        href: `coaps://${this.tradfriIP}:5684${command}`,
+        href: `coaps://${this.config.hubIpAddress}:5684${command}`,
       };
 
       if (payload) {

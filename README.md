@@ -4,31 +4,35 @@ tradfri-coapdtls
 This sofware provides an interface for the tradfri lights
 over the tradfri ip-gateway with coap+dtls protocol.
 
-========
-
 ### Usage
 
 This lib is Promise based.
 
 ```
-(coffeecode)
+'use strict';
 
-  TradfriCoapdtls = require('tradfri-coapdtls')
+const Tradfri = require('tradfri-coapdtls')
 
-  tradfriHub = new TradfriCoapdtls({securityId: @secID , hubIpAddress: @hubIP})
-  tradfriHub.connect().then( (val)=>
-    tradfriHub.getGatewayInfo().then( (res) =>
-      console.log("Gateway online - Firmware: #{res['9029']}")
-    ).catch( (error) =>
+const ID = "newIdent"
+const KEY = "123adc456def7890"
+const IP = "192.168.178.42"
+
+var TradfriHub = new Tradfri({securityId: KEY, hubIpAddress: IP, clientId: "Client_identity"});
+TradfriHub.connect().then((val) =>
+  TradfriHub.initPSK(ID).then((res) => {
+      var psk=res['9091'];
+      console.log(`Gateway reachable - psk generated: ${psk}`);
+      TradfriHub.finish()
+      TradfriHub = new Tradfri({securityId: psk, hubIpAddress: IP, clientId: ID});
+      TradfriHub.connect().then((val) =>
+        TradfriHub.getGatewayInfo().then( (res) =>
+          console.log(`Gateway - Firmware: ${res['9029']}`)
+        )
+      );
+    }).catch((error) =>
       console.log ("Gateway is not reachable!")
     )
-  )
-  tradfriHub.setDevice(@address, {
-    state: 1,
-    brightness: 254
-  },5).then( (res) =>
-    console.log("New value send to device")
-  )
+);
 
 ```
 
@@ -44,20 +48,28 @@ This lib is Promise based.
 * 0.0.15 - bugfix
 * 0.0.16 - bugfix
 * 0.0.17 - added reboot and discovery mode
+* 0.0.18 - code refactoring
 
 ### License
 ----------------------------
 MIT, see LICENSE.md file.
 
 ----------------------------
+#### Contributors
+
+* [kosta](https://github.com/treban)
+* [dlemper](https://github.com/dlemper)
+
+----------------------------
+#### Credits
 
 This software is based on the node-coap package with dtls extensions
 node-coap software performed by contributors :
-Matteo Collina,
-Nguyen Quoc Dinh,
-Daniel Moran Jimenez,
-Ignacio Martín,
-Christopher Hiller
+* Matteo Collina,
+* Nguyen Quoc Dinh,
+* Daniel Moran Jimenez,
+* Ignacio Martín,
+* Christopher Hiller
 
 DTLS extensions performed by
-J. Ian Lindsay
+* J. Ian Lindsay

@@ -8,29 +8,26 @@
 
 'use strict';
 
-const Tradfri = require('tradfri-coapdtls')
+const Tradfri = require('./tradfri-coapdtls')
+
+var id = "id" + Math.random().toString(16).slice(2) // generate unique id
 
 var config = {
-  securityId: "123adc456def7890",
-  hubIpAddress: "192.168.178.42",
-  psk: null,
-  clientId: "newIdent"
-}
+  securityId: "security-id",      // security key
+  hubIpAddress: "0.0.0.0",        // tradfri ip address
+  psk: null,                      // at first connection no psk is needed
+  clientId: id,                   // unique client id
+};
 
 var TradfriHub = new Tradfri(config);
-TradfriHub.connect().then((val) =>
-  console.log(`Gateway online - psk generated: ${psk}`);
-  TradfriHub.initPSK(ID).then((res) => {
-      var psk=res['9091'];
-      console.log(`Gateway online - psk generated: ${psk}`);
-      TradfriHub.finish()
-      TradfriHub = new Tradfri({securityId: psk, hubIpAddress: IP, clientId: ID});
-      TradfriHub.connect().then((val) =>
-        TradfriHub.getGatewayInfo().then( (res) =>
-          console.log(`Gateway online - Firmware: ${res['9029']}`)
-        )
-      );
-    }).catch((error) =>
-      console.log ("Gateway is not reachable!")
-    )
-);
+
+TradfriHub.connect().then((key) => {
+  console.log(`With the first connection, the gateway generates a session key. \n This must be stored with the unique ID for the next connection.\n  id is: ${id}\n  psk is: ${key}`);
+  TradfriHub.getGatewayInfo().then((res) => {
+    console.log(`Gateway connected:\n  Firmware Version: ${res['9029']}\n  NTP Server ${res['9023']}`);
+  });
+  TradfriHub.getAllDeviceIDs().then((res) => {
+    console.log(`All bulbs ids:`);
+    console.log(res);
+  });
+});

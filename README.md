@@ -1,8 +1,7 @@
 tradfri-coapdtls
 =======================
 
-This sofware provides an interface for the tradfri lights
-over the tradfri ip-gateway with coap+dtls protocol.
+This sofware provides an interface for the tradfri lights via the tradfri ip-gateway.
 
 ### Usage
 
@@ -11,28 +10,29 @@ This lib is Promise based.
 ```
 'use strict';
 
-const Tradfri = require('tradfri-coapdtls')
+const Tradfri = require('./tradfri-coapdtls')
 
-const ID = "newIdent"
-const KEY = "123adc456def7890"
-const IP = "192.168.178.42"
+var id = "id" + Math.random().toString(16).slice(2) // generate unique id
 
-var TradfriHub = new Tradfri({securityId: KEY, hubIpAddress: IP, clientId: "Client_identity"});
-TradfriHub.connect().then((val) =>
-  TradfriHub.initPSK(ID).then((res) => {
-      var psk=res['9091'];
-      console.log(`Gateway reachable - psk generated: ${psk}`);
-      TradfriHub.finish()
-      TradfriHub = new Tradfri({securityId: psk, hubIpAddress: IP, clientId: ID});
-      TradfriHub.connect().then((val) =>
-        TradfriHub.getGatewayInfo().then( (res) =>
-          console.log(`Gateway - Firmware: ${res['9029']}`)
-        )
-      );
-    }).catch((error) =>
-      console.log ("Gateway is not reachable!")
-    )
-);
+var config = {
+  securityId: "security-id",      // security key
+  hubIpAddress: "0.0.0.0",        // tradfri ip address
+  psk: null,                      // at first connection no psk is needed
+  clientId: id,                   // unique client id
+};
+
+var TradfriHub = new Tradfri(config);
+
+TradfriHub.connect().then((key) => {
+  console.log(`With the first connection, the gateway generates a session key. \n This must be stored with the unique ID for the next connection.\n  id is: ${id}\n  psk is: ${key}`);
+  TradfriHub.getGatewayInfo().then((res) => {
+    console.log(`Gateway connected:\n  Firmware Version: ${res['9029']}\n  NTP Server ${res['9023']}`);
+  });
+  TradfriHub.getAllDeviceIDs().then((res) => {
+    console.log(`All bulbs ids:`);
+    console.log(res);
+  });
+});
 
 ```
 
@@ -48,7 +48,7 @@ TradfriHub.connect().then((val) =>
 * 0.0.15 - bugfix
 * 0.0.16 - bugfix
 * 0.0.17 - added reboot and discovery mode
-* 0.0.18 - code refactoring
+* 0.0.18 - code refactoring - es2015 syntax
 
 ### License
 ----------------------------

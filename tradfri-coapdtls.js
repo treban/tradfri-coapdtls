@@ -17,7 +17,7 @@ const URL = require('url')
 const util = require('util')
 const events = require('events')
 
-const throttler = pthrottler.create(10, { 'coap-req': 1 });
+var throttler = pthrottler.create(10, { 'coap-req': 1 });
 
 const coapTiming = {
   ackTimeout: 0.5,
@@ -36,13 +36,15 @@ class TradfriCoapdtls extends events.EventEmitter {
     this.dtlsOpts = null;
 
     this.config = config;
+    this.tradfriIP = config.hubIpAddress
+
     parameters.refreshTiming(coapTiming);
 
     this.dtlsOpts = {
       host: this.config.hubIpAddress,
       port: 5684,
-      psk: new Buffer(this.config.psk || this.config.securityId), // key
-      PSKIdent: new Buffer(this.config.psk ? this.config.clientId : 'Client_identity'), // user
+      psk: new Buffer(this.config.psk || this.config.securityId),
+      PSKIdent: new Buffer(this.config.psk ? this.config.clientId : 'Client_identity'),
       peerPublicKey: null,
       key: null,
     };
@@ -54,9 +56,23 @@ class TradfriCoapdtls extends events.EventEmitter {
         type: 'udp4',
         host: this.config.hubIpAddress,
         port: 5684,
-      }, this.dtlsOpts, res => resolve());
-    })
-    .then(() => (this.config.psk ? Promise.resolve() : this._initPSK(this.config.clientId)));
+      }, this.dtlsOpts, res => {
+        if (this.config.psk) {
+          resolve();
+        } else {
+          this._initPSK(this.config.clientId).then((data) => {
+            this.dtlsOpts.PSKIdent = new Buffer(this.config.clientId);
+            this.dtlsOpts.psk = new Buffer(data['9091']);
+            this.dtlsOpts.socket = null;
+            this.config.psk = data['9091'];
+            this.globalAgent.finish();
+            this.connect().then( (data) => {
+                resolve(this.config.psk);
+            });
+          });
+        }
+      });
+    });
   }
 
   finish() {
@@ -66,22 +82,23 @@ class TradfriCoapdtls extends events.EventEmitter {
   }
 
   _initPSK(ident) {
-    return this._send_request('/15011/9063', {
-      9090: ident
-    }, false, true)
-      .then((data) => {
-        this.dtlsOpts.PSKIdent = new Buffer(ident);
-        this.dtlsOpts.psk = new Buffer(data['9091']);
-        console.log('Put this key into config.psk:', data['9091']);
-      });
-  };
-
-  getGatewayInfo() {
-    return this._send_request('/15011/15012');
+    return this._send_request('POST','/15011/9063', {9090: ident}, false);
   }
 
-  setGateway(payload) {
-    return this._send_request('/15011/15012', { 9023: payload });
+  getGatewayInfo() {
+    return this._send_request('GET','/15011/15012');
+  }
+
+  setGatewayNTP(ntpserver) {
+    return this._send_request('GET','/15011/15012', { 9023: ntpserver });
+  }
+
+  setReboot() {
+    return this._send_request('POST','/15011/9030');
+  }
+
+  setDiscovery() {
+    return this._send_request('PUT',`/15011/15012`, { 9061: 30 });
   }
 
   getAllDevices() {
@@ -100,96 +117,97 @@ class TradfriCoapdtls extends events.EventEmitter {
   }
 
   getAllDeviceIDs() {
-    return this._send_request('/15001');
+    return this._send_request('GET','/15001');
   }
 
   getAllGroupIDs() {
-    return this._send_request('/15004');
+    return this._send_request('GET','/15004');
   }
 
   getAllScenesIDs(gid) {
-    return this._send_request(`/15005${gid}`);
+    return this._send_request('GET',`/15005/${gid}`);
   }
 
   getDevicebyID(id) {
-    return this._send_request(`/15001/${id}`);
+    return this._send_request('GET',`/15001/${id}`);
   }
 
   getGroupbyID(id) {
-    return this._send_request(`/15004/${id}`);
+    return this._send_request('GET',`/15004/${id}`);
   }
 
   getScenebyID(gid, id) {
-    return this._send_request(`/15005/${gid}/${id}`);
+    return this._send_request('GET',`/15005/${gid}/${id}`);
   }
 
-  setDevice(id, sw, time = 5) {
-    return this._send_request(`/15001/${id}`, {
+  setDevice(id, sw, time) {
+    console.log (sw.brightness)
+    return this._send_request('PUT',`/15001/${id}`, {
       3311: [{
         5850: sw.state,
-        5712: time,
-        0: sw.brightness > 0 ? { 5851: sw.brightness } : undefined,
+        5712: time ? time : 5,
+        5851: sw.brightness > 0 ? sw.brightness : undefined,
       }],
     });
   }
 
-  setGroup(id, sw, time = 5) {
-    return this._send_request(`/15004/${id}`, {
+  setGroup(id, sw, time) {
+    return this._send_request('PUT',`/15004/${id}`, {
       5850: sw.state,
-      5712: time,
+      5712: time ? time : 5,
       5851: sw.brightness > 0 ? sw.brightness : undefined,
     });
   }
 
-  setColorHex(id, color, time = 5) {
-    return this._send_request(`/15001/${id}`, {
+  setColorHex(id, color,time) {
+    return this._send_request('PUT',`/15001/${id}`, {
       3311: [{
         5706: color,
-        5712: time,
+        5712: time ? time : 5,
       }],
     });
   }
 
-  setColorXY(id, colorX, colorY, time = 5) {
-    return this._send_request(`/15001/${id}`, {
+  setColorXY(id, colorX, colorY, time) {
+    return this._send_request('PUT',`/15001/${id}`, {
       3311: [{
         5709: colorX,
         5710: colorY,
-        5712: time,
+        5712: time ? time : 5,
       }]
     });
   }
 
-  setColorTemp(id,color,time=5) {
-    return this._send_request(`/15001/${id}`, {
+  setColorTemp(id,color, time) {
+    return this._send_request('PUT',`/15001/${id}`, {
       3311: [{
         5709: color,
         5710: 27000,
-        5712: time,
+        5712: time ? time : 5,
       }],
     });
   }
 
   setScene(gid, id) {
-    return this._send_request(`/15004/${gid}`, {
+    return this._send_request('PUT',`/15004/${gid}`, {
       5850: 1,
       9039: id,
     });
   }
 
   setObserver(id, callback) {
-    return this._send_request(`/15001/${id}`, false, callback);
+    return this._send_request('GET',`/15001/${id}`, false, callback);
   }
 
   setObserverGroup(id, callback) {
-    return this._send_request(`/15004/${id}`, false, callback);
+    return this._send_request('GET',`/15004/${id}`, false, callback);
   }
 
-  _send_request(command, payload, callback, ident) {
-    return throttler.enqueue(() => this._send_command(command, payload, callback, ident), 'coap-req');
+  _send_request(method, command, payload, callback) {
+    return throttler.enqueue(() => this._send_command(method, command, payload, callback), 'coap-req');
   }
 
-  _send_command(command, payload, callback, ident) {
+  _send_command(method, command, payload, callback) {
     this.req = null;
     return new Promise((resolve, reject) => {
       const url = {
@@ -202,21 +220,11 @@ class TradfriCoapdtls extends events.EventEmitter {
         hash: null,
         search: null,
         query: null,
-        method: 'GET',
+        method: method,
         pathname: command,
         path: command,
         href: `coaps://${this.config.hubIpAddress}:5684${command}`,
       };
-
-      if (payload) {
-        if (ident) {
-          url.method = 'POST';
-        } else {
-          url.method = 'PUT';
-        }
-      } else {
-        url.method = 'GET';
-      }
 
       if (callback) {
         url.observe = true;
@@ -238,13 +246,10 @@ class TradfriCoapdtls extends events.EventEmitter {
             res.on('data', dat => callback(JSON.parse(dat.toString())));
             resolve(`RC: ${res.code}`);
           }
-
-          if ((ident || !payload) && res.payload.toString()) {
-            resolve(JSON.parse(res.payload.toString()));
-          } else if (payload) {
-            resolve(`RC: ${res._packet.code}`);
+          if ((method === 'POST' || !payload) && res.payload.toString()) {
+             resolve(JSON.parse(res.payload.toString()));
           } else {
-            reject('empty message');
+             resolve(`RC: ${res._packet.code}`);
           }
         }
       });

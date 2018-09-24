@@ -221,6 +221,18 @@
       return this._send_request('/15001/' + id, payload);
     };
 
+    TradfriCoapdtls.prototype.setSmartSwitch = function(id, sw) {
+      var payload;
+      payload = {
+        3312: [
+          {
+            5850: sw.state
+          }
+        ]
+      };
+      return this._send_request('/15001/' + id, payload);
+    };
+
     TradfriCoapdtls.prototype.setGroup = function(id, sw, time) {
       var payload;
       if (time == null) {

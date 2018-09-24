@@ -44,6 +44,7 @@ This lib is Promise based.
 * 0.0.15 - bugfix
 * 0.0.16 - bugfix
 * 0.0.17 - added reboot and discovery mode
+* 0.0.18 - added smart wall plug
 
 ### License
 ----------------------------

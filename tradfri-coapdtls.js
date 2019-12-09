@@ -141,7 +141,6 @@ class TradfriCoapdtls extends events.EventEmitter {
   }
 
   setDevice(id, sw, time) {
-    console.log (sw.brightness)
     return this._send_request('PUT',`/15001/${id}`, {
       3311: [{
         5850: sw.state,
@@ -193,6 +192,26 @@ class TradfriCoapdtls extends events.EventEmitter {
       5850: 1,
       9039: id,
     });
+  }
+
+  setSmartSwitch(id, sw) {
+    return this._send_request('PUT',`/15001/${id}`, {
+      3312: [{
+        5850: sw.state
+      }]
+    });
+  }
+
+  setBlind(id, sw) {
+    return this._send_request('PUT',`/15001/${id}`, {
+      15015: [{
+        5536: sw.value
+      }]
+    });
+  }
+
+  setPayload(id,payload) {
+    return this._send_request('PUT',`/15001/${id}`, payload );
   }
 
   setObserver(id, callback) {

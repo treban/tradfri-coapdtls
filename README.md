@@ -48,7 +48,8 @@ TradfriHub.connect().then((key) => {
 * 0.0.15 - bugfix
 * 0.0.16 - bugfix
 * 0.0.17 - added reboot and discovery mode
-* 0.0.18 - code refactoring - es2015 syntax
+* 0.0.18 - added smart wall plug
+* 0.1.0 - code refactoring - es2015 syntax and blind support
 
 ### License
 ----------------------------

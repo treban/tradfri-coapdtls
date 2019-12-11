@@ -58,9 +58,12 @@ class TradfriCoapdtls extends events.EventEmitter {
         port: 5684,
       }, this.dtlsOpts, res => {
         if (this.config.psk) {
+          console.log("bla")
           resolve();
         } else {
+          console.log("initpsk")
           this._initPSK(this.config.clientId).then((data) => {
+            console.log("return")
             this.dtlsOpts.PSKIdent = new Buffer(this.config.clientId);
             this.dtlsOpts.psk = new Buffer(data['9091']);
             this.dtlsOpts.socket = null;
@@ -69,6 +72,8 @@ class TradfriCoapdtls extends events.EventEmitter {
             this.connect().then( (data) => {
                 resolve(this.config.psk);
             });
+          }).catch( (response) => {
+            console.log(response)
           });
         }
       });
@@ -82,6 +87,7 @@ class TradfriCoapdtls extends events.EventEmitter {
   }
 
   _initPSK(ident) {
+    console.log(ident)
     return this._send_request('POST','/15011/9063', {9090: ident}, false);
   }
 
@@ -244,6 +250,8 @@ class TradfriCoapdtls extends events.EventEmitter {
         path: command,
         href: `coaps://${this.config.hubIpAddress}:5684${command}`,
       };
+
+      console.log(url)
 
       if (callback) {
         url.observe = true;

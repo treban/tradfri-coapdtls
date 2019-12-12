@@ -13,11 +13,12 @@ const Tradfri = require('./tradfri-coapdtls')
 var id = "id" + Math.random().toString(16).slice(2) // generate unique id
 
 var config = {
-  securityId: "security-id",      // security key
-  hubIpAddress: "0.0.0.0",        // tradfri ip address
-  psk: null,                      // at first connection no psk is needed
-  clientId: id,                   // unique client id
+  securityId: "Dbmsek40m1irfZE0",      // security key
+  hubIpAddress: "10.0.10.106",        // tradfri ip address
+  psk: "UkFvslecXVuTrPRp",                      // at first connection no psk is needed
+  clientId: id
 };
+
 
 var TradfriHub = new Tradfri(config);
 

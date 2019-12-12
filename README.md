@@ -3,6 +3,8 @@ tradfri-coapdtls
 
 This sofware provides an interface for the tradfri lights via the tradfri ip-gateway.
 
+IMPORTANT: With version 0.1.0 the connection process was changed. Please check the example.
+
 ### Usage
 
 This lib is Promise based.
@@ -37,19 +39,7 @@ TradfriHub.connect().then((key) => {
 ```
 
 ### ChangeLog
-* 0.0.7 - first public alpha version
-* 0.0.8 - Code refactoring
-* 0.0.9 - bugfix
-* 0.0.10 - bugfix
-* 0.0.11 - bugfix
-* 0.0.12 - changed package to nativ js
-* 0.0.13 - add rgb
-* 0.0.14 - add psk handshake needed for gateway version 1.2.42
-* 0.0.15 - bugfix
-* 0.0.16 - bugfix
-* 0.0.17 - added reboot and discovery mode
-* 0.0.18 - added smart wall plug
-* 0.1.0 - code refactoring - es2015 syntax and blind support
+[-> see CHANGELOG](https://github.com/treban/tradfri-coapdtls/blob/master/CHANGELOG.md)
 
 ### License
 ----------------------------

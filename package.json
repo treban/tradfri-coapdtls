@@ -18,7 +18,6 @@
   ],
   "files": [
     "tradfri-coapdtls.js",
-    "example.js",
     "README.md",
     "LICENSE.md",
     "lib/agent.js",

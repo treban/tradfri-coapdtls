@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 ## [0.1.0]
 ### Added
 * blind support
+### Fixed
+* #6 remove log messages
 ### Changed
 * code refactoring - es2015 syntax a
 ## [0.0.18]

@@ -33,15 +33,15 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "bl": "~1.0.0",
-    "capitalize": "^1.0.0",
-    "coap-packet": "~0.1.12",
+    "bl": "~4.0.0",
+    "capitalize": "^2.0.1",
+    "coap-packet": "~0.1.14",
     "node-mbed-dtls": "git+https://github.com/treban/node-mbed-dtls.git",
-    "debug": "^2.2.0",
-    "fastseries": "^1.7.0",
-    "lru-cache": "~4.0.0",
+    "debug": "^4.1.1",
+    "fastseries": "^1.7.2",
+    "lru-cache": "~5.1.1",
     "readable-stream": "~2.0.5",
-    "cbor": "~1.0.4",
+    "cbor": "~5.0.1",
     "p-throttler": "^1.0.2"
   },
   "bugs": {
